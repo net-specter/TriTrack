@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/theme/text_styles.dart';
+import 'package:frontend/features/home_page/widgets/start-stop-race.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -9,10 +8,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('00:00:00', style: TriTextStyles.headline),
-          Text('Participants Dashboard', style: TriTextStyles.title),
+          const RaceTimerWidget(), // Add the race timer widget
         ],
       ),
     );
