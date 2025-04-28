@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/colors.dart';
 import 'package:frontend/core/theme/text_styles.dart';
 import 'package:frontend/features/home_page/pages/home.dart';
-
+import 'package:frontend/features/Navigation_Bar/Bottombar.dart';
 import 'core/theme/app_theme.dart';
 
 main() {
@@ -39,6 +39,7 @@ class MyHomePage extends StatelessWidget {
         ),
       ),
       body: HomePage(),
+      bottomNavigationBar: BottomBar(),
     );
   }
 }
