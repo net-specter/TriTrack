@@ -14,11 +14,31 @@ class _BottomBarState extends State<BottomBar> {
   int _currentIndex = 0;
 
   final List<BottomBarItem> _items = const [
-    BottomBarItem(Icons.home_outlined, Icons.home, 'Home'),
-    BottomBarItem(Icons.people_outline, Icons.people, 'Participant'),
-    BottomBarItem(Icons.edit_note_outlined, Icons.edit_note, 'Input BIB'),
-    BottomBarItem(Icons.timer_outlined, Icons.timer, 'Time Tracker'),
-    BottomBarItem(Icons.person_outline, Icons.person, 'Profile'),
+    BottomBarItem(
+      inactiveIcon: Icons.home_outlined,
+      activeIcon: Icons.home,
+      label: 'Home',
+    ),
+    BottomBarItem(
+      inactiveIcon: Icons.people_outline,
+      activeIcon: Icons.people,
+      label: 'Participants',
+    ),
+    BottomBarItem(
+      inactiveIcon: Icons.note_add_outlined,
+      activeIcon: Icons.note_add,
+      label: 'Input BIB',
+    ),
+    BottomBarItem(
+      inactiveIcon: Icons.leaderboard_outlined,
+      activeIcon: Icons.leaderboard,
+      label: 'Leaderboard',
+    ),
+    BottomBarItem(
+      inactiveIcon: Icons.notifications_outlined,
+      activeIcon: Icons.notifications,
+      label: 'Notification',
+    ),
   ];
 
   @override
@@ -27,11 +47,16 @@ class _BottomBarState extends State<BottomBar> {
       height: 80,
       decoration: BoxDecoration(
         color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(32),
+          topRight: Radius.circular(32),
+        ),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
+            blurRadius: 10,
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -53,8 +78,11 @@ class _BottomBarState extends State<BottomBar> {
         onTap: () {
           setState(() => _currentIndex = index);
           widget.onIndexChanged?.call(index);
+          item.onTap?.call(); // Call the item's onTap if provided
         },
+        // ignore: deprecated_member_use
         splashColor: TriColors.primary.withOpacity(0.2),
+        // ignore: deprecated_member_use
         highlightColor: TriColors.primary.withOpacity(0.1),
         child: SizedBox(
           width: 80,
@@ -88,6 +116,12 @@ class BottomBarItem {
   final IconData inactiveIcon;
   final IconData activeIcon;
   final String label;
+  final void Function()? onTap;
 
-  const BottomBarItem(this.inactiveIcon, this.activeIcon, this.label);
+  const BottomBarItem({
+    required this.inactiveIcon,
+    required this.activeIcon,
+    required this.label,
+    this.onTap,
+  });
 }
