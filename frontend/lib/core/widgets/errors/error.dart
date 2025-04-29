@@ -8,24 +8,27 @@ class Error extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Center(
-          child: Lottie.asset(
-            'assets/lottie/error.json',
-            width: 200,
-            height: 200,
-            repeat: true,
-            reverse: true,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 30),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Lottie.asset(
+              'assets/lottie/error.json',
+              width: 200,
+              height: 200,
+              repeat: true,
+              reverse: true,
+            ),
           ),
-        ),
-        Text(
-          errorMessage ?? "Failed to load data. Please try again.",
-          style: TriTextStyles.body.copyWith(fontWeight: FontWeight.w900),
-        ),
-      ],
+          Text(
+            errorMessage ?? "Failed to load data. Please try again.",
+            style: TriTextStyles.body.copyWith(fontWeight: FontWeight.w900),
+          ),
+        ],
+      ),
     );
   }
 }

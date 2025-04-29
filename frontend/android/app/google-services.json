@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1017582424994",
+    "firebase_url": "https://tritrack-713a1-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "tritrack-713a1",
+    "storage_bucket": "tritrack-713a1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017582424994:android:e44edf6d3c75abc5ea98fb",
+        "android_client_info": {
+          "package_name": "com.tracktitans.tritrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoopqvYo4vw2ob-tKbCUshK8UK0Hqh9_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
