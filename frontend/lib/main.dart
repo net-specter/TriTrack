@@ -11,7 +11,7 @@ import './features/Navigation_Bar/bottom_bar.dart';
 import './features/home_page/pages/home.dart';
 import 'package:provider/provider.dart';
 import './core/theme/app_theme.dart';
-import './firebase_options.dart';
+import './data/firebase_options.dart';
 
 main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -51,7 +51,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isConnected = true;
-
+  final List<Widget> _pages = [
+    const HomePage(),
+    const Center(child: Text('Participants Page')),
+    const Center(child: Text('Input BIB Page')),
+    const Center(child: Text('Leaderboard Page')),
+    const Center(child: Text('Notification Page')),
+  ];
   @override
   void initState() {
     super.initState();
@@ -68,14 +74,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int _currentIndex = 0;
-
-  final List<Widget> _pages = [
-    const HomePage(),
-    const Center(child: Text('Participants Page')),
-    const Center(child: Text('Input BIB Page')),
-    const Center(child: Text('Leaderboard Page')),
-    const Center(child: Text('Notification Page')),
-  ];
 
   @override
   Widget build(BuildContext context) {
