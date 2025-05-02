@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/colors.dart';
 import 'package:frontend/core/theme/text_styles.dart';
 import 'package:frontend/features/home_page/pages/home.dart';
+import 'package:frontend/features/input_bib/pages/BIB_Input.dart';
 
 import 'core/theme/app_theme.dart';
 
@@ -38,7 +39,10 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: HomePage(),
+      body:BIBInputPage(),
+
     );
   }
 }
+
+
