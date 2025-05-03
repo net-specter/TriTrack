@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/text_styles.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Home Page',
-        style: TriTextStyles.body.copyWith(fontWeight: FontWeight.w500),
-      ),
+    return Column(children: [
+        
+      ],
     );
   }
 }

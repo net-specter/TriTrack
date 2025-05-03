@@ -1,6 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/core/providers/participant_provider.dart';
+import 'package:frontend/core/services/participant_service.dart';
+import 'package:frontend/data/repositories/participant_repository.dart';
 import './core/providers/race_provider.dart';
 import './core/services/race_service.dart';
 import './core/theme/colors.dart';
@@ -21,6 +24,12 @@ main() async {
         Provider(create: (_) => RaceService(RaceRepository())),
         ChangeNotifierProvider(
           create: (context) => RaceProvider(context.read<RaceService>()),
+        ),
+        Provider(create: (_) => ParticipantService(ParticipantRepository())),
+        ChangeNotifierProvider(
+          create:
+              (context) =>
+                  ParticipantProvider(context.read<ParticipantService>()),
         ),
       ],
       child: const MyApp(),

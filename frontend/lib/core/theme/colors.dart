@@ -7,7 +7,7 @@ class TriColors {
   // ignore: deprecated_member_use
   static Color primaryLight = const Color(0xFF4E61F6).withOpacity(0.5);
   // ignore: deprecated_member_use
-  static Color secondaryLight = const Color(0xFFEE443F).withOpacity(0.5);
+  static Color secondaryLight = const Color(0xFFF6A19E);
 
   static Color backgroundAccent = const Color(0xFFEDEDED);
 
