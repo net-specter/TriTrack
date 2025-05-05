@@ -26,8 +26,6 @@ class _RaceTimerWidgetState extends State<RaceTimerWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 419,
-      height: 206,
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: const Color.fromRGBO(157, 178, 206, 0.1),
@@ -37,6 +35,7 @@ class _RaceTimerWidgetState extends State<RaceTimerWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(height: 15),
             const RaceStatusHeader(),
             const SizedBox(height: 5),
             RaceStatusText(statusText: _controller.getStatusText()),
@@ -50,6 +49,7 @@ class _RaceTimerWidgetState extends State<RaceTimerWidget> {
               onStart: () => _controller.startTimer(_onTimerTick),
               onEnd: _controller.endTimer,
             ),
+            const SizedBox(height: 15),
           ],
         ),
       ),

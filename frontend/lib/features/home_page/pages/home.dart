@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/features/home_page/widgets/start-stop-race.dart';
+import 'package:frontend/features/home_page/widgets/start_stop_race.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
