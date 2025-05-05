@@ -11,11 +11,10 @@ import './core/theme/text_styles.dart';
 import './core/widgets/errors/no_connection.dart';
 import './data/repositories/race_repository.dart';
 import './features/Navigation_Bar/bottom_bar.dart';
-import './features/home_page/pages/home.dart';
 import 'package:provider/provider.dart';
 import './core/theme/app_theme.dart';
 import './data/firebase_options.dart';
-import 'features/input_bib/pages/input_bib.dart';
+import 'app/router.dart';
 
 main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -61,13 +60,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isConnected = true;
-  final List<Widget> _pages = [
-    const HomePage(),
-    const Center(child: Text('Participants Page')),
-    const InputBib(),
-    const Center(child: Text('Leaderboard Page')),
-    const Center(child: Text('Notification Page')),
-  ];
   @override
   void initState() {
     super.initState();
@@ -100,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      body: _pages[_currentIndex],
+      body: pages[_currentIndex],
       bottomNavigationBar: BottomBar(
         onIndexChanged: (index) {
           setState(() {

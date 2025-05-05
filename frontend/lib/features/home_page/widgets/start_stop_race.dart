@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/colors.dart';
 import 'package:frontend/core/theme/text_styles.dart';
-import 'package:frontend/features/home_page/controllers/start_stop_race-controller.dart';
+import 'package:frontend/features/home_page/controllers/start_stop_race_controller.dart';
 
 class RaceTimerWidget extends StatefulWidget {
   const RaceTimerWidget({super.key});
