@@ -48,8 +48,8 @@ class ListViewComponent extends StatelessWidget {
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
                   childAspectRatio: 2,
                 ),
                 padding: const EdgeInsets.all(10),
@@ -112,7 +112,6 @@ class ListViewComponent extends StatelessWidget {
                 },
               ),
             ),
-            const SizedBox(height: 20),
             Pagination(
               currentPage: currentPage,
               totalItems: items.length,

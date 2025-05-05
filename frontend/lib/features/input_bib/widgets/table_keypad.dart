@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/colors.dart';
 import 'package:frontend/core/theme/text_styles.dart';
@@ -34,7 +36,6 @@ class TableKeypad extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 25),
           child: Column(
             children: [
-              // Table Header
               Table(
                 columnWidths: const {
                   0: FlexColumnWidth(1),
@@ -85,8 +86,6 @@ class TableKeypad extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // Table Body
               Expanded(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
@@ -131,7 +130,7 @@ class TableKeypad extends StatelessWidget {
                                 padding: const EdgeInsets.all(12.0),
                                 child: Center(
                                   child: Text(
-                                    p.swimmingDuration ?? "N/A",
+                                    _getDuration(p),
                                     style: TriTextStyles.bodySmall,
                                   ),
                                 ),
@@ -166,6 +165,17 @@ class TableKeypad extends StatelessWidget {
     );
   }
 
+  String _getDuration(Participant participant) {
+    if (segmentType == 'swimming') {
+      return participant.swimmingDuration ?? '';
+    } else if (segmentType == 'cycling') {
+      return participant.cyclingDuration ?? '';
+    } else if (segmentType == 'running') {
+      return participant.runningDuration ?? '';
+    }
+    return '';
+  }
+
   void deleteParticipant(
     String segmentType,
     BuildContext context,
@@ -181,16 +191,14 @@ class TableKeypad extends StatelessWidget {
           await participantProvider.cardClickRemoveCycling(participant.id);
           break;
         case 'running':
-          await participantProvider.cardClickRemoveSwimming(participant.id);
+          await participantProvider.cardClickRemoveRunning(participant.id);
           break;
       }
-      ScaffoldMessenger.of(
-        // ignore: use_build_context_synchronously
-        context,
-      ).showSnackBar(SnackBar(content: Text("Participant undo successfully")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Participant undo successfully")),
+      );
     } catch (e) {
       ScaffoldMessenger.of(
-        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text("Error undo participant: $e")));
     }

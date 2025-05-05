@@ -25,7 +25,7 @@ class Pagination extends StatelessWidget {
     int endIndex = (startIndex + windowSize).clamp(0, totalPages);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Row(
         children: [
           Expanded(
