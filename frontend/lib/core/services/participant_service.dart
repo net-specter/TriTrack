@@ -22,28 +22,66 @@ class ParticipantService {
     });
   }
 
-  Stream<List<CombinedParticipantDto>> getCombinedParticipants() {
-    return _participantRepository.getCombinedParticipants().asyncMap((dtoList) {
+  // Stream<List<CombinedParticipantDto>> getCombinedParticipants() {
+  //   return _participantRepository.getCombinedParticipants().asyncMap((dtoList) {
+  //     return dtoList.map((dto) {
+  //       return CombinedParticipantDto(
+  //         participant: dto.participant,
+  //         checkpointLog: CheckPointLogDto(
+  //           id: dto.checkpointLog.id,
+  //           segmentType: dto.checkpointLog.segmentType,
+  //           duration: dto.checkpointLog.duration,
+  //           timeLog: dto.checkpointLog.timeLog,
+  //           createdAt: dto.checkpointLog.createdAt,
+  //           updatedAt: dto.checkpointLog.updatedAt,
+  //         ),
+  //       );
+  //     }).toList();
+  //   });
+  // }
+  Stream<List<Participant>> getParticipantBySegment(String segmentType) {
+    return _participantRepository.getParticipantBySegment(segmentType).map((
+      dtoList,
+    ) {
       return dtoList.map((dto) {
-        return CombinedParticipantDto(
-          participant: dto.participant,
-          checkpointLog: CheckPointLogDto(
-            id: dto.checkpointLog.id,
-            segmentType: dto.checkpointLog.segmentType,
-            duration: dto.checkpointLog.duration,
-            timeLog: dto.checkpointLog.timeLog,
-            createdAt: dto.checkpointLog.createdAt,
-            updatedAt: dto.checkpointLog.updatedAt,
-          ),
+        return Participant(
+          id: dto.id,
+          name: dto.name,
+          bibNumber: dto.bibNumber,
+          category: dto.category,
+          swimmingTime: dto.swimmingTime,
+          swimmingDuration: dto.swimmingDuration,
+          cyclingTime: dto.cyclingTime,
+          cyclingDuration: dto.cyclingDuration,
+          runningTime: dto.runningTime,
+          runningDuration: dto.runningDuration,
         );
       }).toList();
     });
   }
 
-  Future<String> checkDuplicateBibNumber(
-    Participant participant,
-    CheckPointLog checkPointLog,
-  ) async {
+  Stream<List<Participant>> getParticipantsBySegmentNotNull(String segment) {
+    return _participantRepository.getParticipantsBySegmentNotNull(segment).map((
+      dtoList,
+    ) {
+      return dtoList.map((dto) {
+        return Participant(
+          id: dto.id,
+          name: dto.name,
+          bibNumber: dto.bibNumber,
+          category: dto.category,
+          swimmingTime: dto.swimmingTime,
+          swimmingDuration: dto.swimmingDuration,
+          cyclingTime: dto.cyclingTime,
+          cyclingDuration: dto.cyclingDuration,
+          runningTime: dto.runningTime,
+          runningDuration: dto.runningDuration,
+        );
+      }).toList();
+    });
+  }
+
+  Future<String> checkDuplicateBibNumber(Participant participant) async {
     return await _participantRepository.checkDuplicateBibNumber(
       ParticipantDto(
         id: participant.id,
@@ -52,20 +90,10 @@ class ParticipantService {
         category: participant.category,
         createdAt: participant.createdAt,
       ),
-      CheckPointLogDto(
-        id: participant.id,
-        segmentType: null,
-        timeLog: null,
-        createdAt: participant.createdAt,
-        updatedAt: participant.createdAt,
-      ),
     );
   }
 
-  Future<String> replaceParticipant(
-    Participant participant,
-    CheckPointLog checkPointLog,
-  ) async {
+  Future<String> replaceParticipant(Participant participant) async {
     final participantDTO = ParticipantDto(
       id: participant.id,
       name: participant.name,
@@ -73,23 +101,11 @@ class ParticipantService {
       category: participant.category,
       createdAt: participant.createdAt,
     );
-    final checkpointlogDTO = CheckPointLogDto(
-      id: checkPointLog.id,
-      segmentType: null,
-      timeLog: null,
-      createdAt: checkPointLog.createdAt,
-      updatedAt: checkPointLog.updatedAt,
-    );
-    return await _participantRepository.replaceParticipant(
-      participantDTO,
-      checkpointlogDTO,
-    );
+
+    return await _participantRepository.replaceParticipant(participantDTO);
   }
 
-  Future<String> addParticipant(
-    Participant participant,
-    CheckPointLog checkpointlog,
-  ) async {
+  Future<String> addParticipant(Participant participant) async {
     final participantDTO = ParticipantDto(
       id: participant.id,
       name: participant.name,
@@ -97,28 +113,46 @@ class ParticipantService {
       category: participant.category,
       createdAt: participant.createdAt,
     );
-    final checkpointlogDTO = CheckPointLogDto(
-      id: checkpointlog.id,
-      segmentType: checkpointlog.segmentType?.name,
-      timeLog: checkpointlog.timeLog,
-      createdAt: checkpointlog.createdAt,
-      updatedAt: checkpointlog.updatedAt,
-    );
-    return await _participantRepository.addParticipant(
-      participantDTO,
-      checkpointlogDTO,
-    );
+    return await _participantRepository.addParticipant(participantDTO);
   }
 
   Future<String> deleteParticipant(Participant participant) async {
     return await _participantRepository.deleteParticipant(participant.id);
   }
 
-  Future<void> cardClick(String participantID) async {
-    await _participantRepository.cardClick(participantID);
+  Future<void> cardClickRunning(String participantID) async {
+    await _participantRepository.cardClickRunning(participantID);
   }
 
-  Future<void> cardClickRemove(String participantID) async {
-    await _participantRepository.cardClickRemove(participantID);
+  Future<void> cardClickCycling(String participantID) async {
+    await _participantRepository.cardClickCycling(participantID);
+  }
+
+  Future<void> cardClickSwimming(String participantID) async {
+    await _participantRepository.cardClickSwimming(participantID);
+  }
+
+  Future<void> cardClickRemoveSwimming(String participantID) async {
+    await _participantRepository.cardClickRemoveSwimming(participantID);
+  }
+
+  Future<void> cardClickRemoveRunning(String participantID) async {
+    await _participantRepository.cardClickRemoveRunning(participantID);
+  }
+
+  Future<void> cardClickRemoveCycling(String participantID) async {
+    await _participantRepository.cardClickRemoveCycling(participantID);
+  }
+
+  Future<String> inputParticipantCycling(String bibNumber) async {
+    return await _participantRepository.inputParticipantCycling(bibNumber);
+  }
+
+  Future<String> inputParticipantRunning(String bibNumber) async {
+    return await _participantRepository.inputParticipantRunning(bibNumber);
+  }
+
+  Future<String> inputParticipantSwimming(String bibNumber) async {
+    return await _participantRepository.inputParticipantSwimming(bibNumber);
   }
 }

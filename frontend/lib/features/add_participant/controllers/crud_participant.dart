@@ -17,19 +17,12 @@ Future<void> createParticipant(
     Participant participant = Participant(
       id: autoId,
       name: "Kao Vichet",
-      bibNumber: 8,
+      bibNumber: 15,
       category: "Category A",
-    );
-
-    CheckPointLog checkpointlog = CheckPointLog(
-      id: autoId,
-      segmentType: null,
-      timeLog: null,
     );
 
     final result = await participantProvider.checkDuplicateBibNumber(
       participant,
-      checkpointlog,
     );
 
     if (result == 'Duplicate') {
@@ -56,10 +49,7 @@ Future<void> createParticipant(
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () async {
-                    await participantProvider.replaceParticipant(
-                      participant,
-                      checkpointlog,
-                    );
+                    await participantProvider.replaceParticipant(participant);
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
                     // ignore: use_build_context_synchronously

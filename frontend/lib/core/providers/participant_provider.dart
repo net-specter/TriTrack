@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/services/participant_service.dart';
-
-import '../../data/dto/participant_dto.dart';
 import '../models/participant.dart';
 
 class ParticipantProvider with ChangeNotifier {
@@ -23,36 +21,63 @@ class ParticipantProvider with ChangeNotifier {
     return _participantService.getParticipants();
   }
 
-  Stream<List<CombinedParticipantDto>> getCombinedParticipants() {
-    return _participantService.getCombinedParticipants();
+  // Stream<List<CombinedParticipantDto>> getCombinedParticipants() {
+  //   return _participantService.getCombinedParticipants();
+  // }
+
+  Stream<List<Participant>> getParticipantsBySegmentNotNull(String segment) {
+    return _participantService.getParticipantsBySegmentNotNull(segment);
   }
 
-  Future<String> replaceParticipant(
-    Participant participant,
-    CheckPointLog checkpointlog,
-  ) {
-    return _participantService.replaceParticipant(participant, checkpointlog);
+  Stream<List<Participant>> getParticipantBySegment(String segmentType) {
+    return _participantService.getParticipantBySegment(segmentType);
   }
 
-  Future<String> checkDuplicateBibNumber(
-    Participant participant,
-    CheckPointLog checkpointlog,
-  ) {
-    return _participantService.checkDuplicateBibNumber(
-      participant,
-      checkpointlog,
-    );
+  Future<String> replaceParticipant(Participant participant) {
+    return _participantService.replaceParticipant(participant);
+  }
+
+  Future<String> checkDuplicateBibNumber(Participant participant) {
+    return _participantService.checkDuplicateBibNumber(participant);
   }
 
   Future<String> deleteParticipant(Participant participant) {
     return _participantService.deleteParticipant(participant);
   }
 
-  Future<void> cardClick(String participantId) async {
-    return await _participantService.cardClick(participantId);
+  Future<void> cardClickRunning(String participantId) async {
+    return await _participantService.cardClickRunning(participantId);
   }
 
-  Future<void> cardClickRemove(String participantId) async {
-    return await _participantService.cardClickRemove(participantId);
+  Future<void> cardClickSwimming(String participantId) async {
+    return await _participantService.cardClickSwimming(participantId);
+  }
+
+  Future<void> cardClickCycling(String participantId) async {
+    return await _participantService.cardClickCycling(participantId);
+  }
+
+  Future<void> cardClickRemoveCycling(String participantId) async {
+    return await _participantService.cardClickRemoveCycling(participantId);
+  }
+
+  Future<void> cardClickRemoveRunning(String participantId) async {
+    return await _participantService.cardClickRemoveRunning(participantId);
+  }
+
+  Future<void> cardClickRemoveSwimming(String participantId) async {
+    return await _participantService.cardClickRemoveSwimming(participantId);
+  }
+
+  Future<String> inputParticipantCycling(String bibNumber) async {
+    return await _participantService.inputParticipantCycling(bibNumber);
+  }
+
+  Future<String> inputParticipantRunning(String bibNumber) async {
+    return await _participantService.inputParticipantRunning(bibNumber);
+  }
+
+  Future<String> inputParticipantSwimming(String bibNumber) async {
+    return await _participantService.inputParticipantSwimming(bibNumber);
   }
 }

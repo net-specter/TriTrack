@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/data/dto/participant_dto.dart';
-
+import '../../../core/models/participant.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/text_styles.dart';
-import '../../../core/widgets/errors/loading.dart';
-import '../../../core/widgets/errors/error.dart';
 import 'pagination.dart';
 
 class ListViewComponent extends StatelessWidget {
-  final Stream<List<CombinedParticipantDto>> stream;
+  final Stream<List<Participant>> stream;
   final int currentPage;
   final int itemsPerPage;
   final ValueChanged<int> onPageChanged;
   final ValueChanged<String> onClickSetTime;
   final ValueChanged<String> onClickRemoveTime;
+  final String segment;
 
   const ListViewComponent({
     super.key,
@@ -23,17 +21,18 @@ class ListViewComponent extends StatelessWidget {
     required this.onPageChanged,
     required this.onClickSetTime,
     required this.onClickRemoveTime,
+    required this.segment,
   });
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<CombinedParticipantDto>>(
+    return StreamBuilder<List<Participant>>(
       stream: stream,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Loading();
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Error(errorMessage: "${snapshot.error}");
+          return Center(child: Text("Error: ${snapshot.error}"));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No participants available.'));
         }
@@ -46,63 +45,71 @@ class ListViewComponent extends StatelessWidget {
         return Column(
           children: [
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 38,
-                  vertical: 10,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 2,
                 ),
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 2,
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  itemCount: paginatedItems.length,
-                  itemBuilder: (context, index) {
-                    var item = paginatedItems[index];
-                    return GestureDetector(
-                      onTap:
-                          () => {
-                            if (item.checkpointLog.timeLog != null)
-                              onClickRemoveTime(item.participant.id)
-                            else
-                              onClickSetTime(item.participant.id),
-                          },
-                      child: Card(
-                        color:
-                            item.checkpointLog.timeLog != null
-                                ? TriColors.primaryLight
-                                : TriColors.secondaryLight,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+                padding: const EdgeInsets.all(10),
+                itemCount: paginatedItems.length,
+                itemBuilder: (context, index) {
+                  var item = paginatedItems[index];
+                  DateTime? segmentTime;
+                  String? segmentDuration;
+
+                  if (segment == "swimming") {
+                    segmentTime = item.swimmingTime;
+                    segmentDuration = item.swimmingDuration;
+                  } else if (segment == "cycling") {
+                    segmentTime = item.cyclingTime;
+                    segmentDuration = item.cyclingDuration;
+                  } else if (segment == "running") {
+                    segmentTime = item.runningTime;
+                    segmentDuration = item.runningDuration;
+                  }
+
+                  return GestureDetector(
+                    onTap:
+                        () => {
+                          if (segmentTime != null)
+                            onClickRemoveTime(item.id)
+                          else
+                            onClickSetTime(item.id),
+                        },
+                    child: Card(
+                      color:
+                          segmentTime != null
+                              ? TriColors.primaryLight
+                              : TriColors.secondaryLight,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              item.bibNumber.toString(),
+                              style: (segmentTime != null
+                                      ? TriTextStyles.bodySmall
+                                      : TriTextStyles.body)
+                                  .copyWith(fontWeight: FontWeight.w900),
+                            ),
+                            if (segmentTime != null)
                               Text(
-                                item.participant.bibNumber.toString(),
-                                style: (item.checkpointLog.timeLog != null
-                                        ? TriTextStyles.bodySmall
-                                        : TriTextStyles.body)
-                                    .copyWith(fontWeight: FontWeight.w900),
-                              ),
-                              if (item.checkpointLog.timeLog != null)
-                                Text(
-                                  "${item.checkpointLog.duration}",
-                                  style: TriTextStyles.captionSmall.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                  ),
+                                "$segmentDuration",
+                                style: TriTextStyles.captionSmall.copyWith(
+                                  fontWeight: FontWeight.w900,
                                 ),
-                            ],
-                          ),
+                              ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 20),
