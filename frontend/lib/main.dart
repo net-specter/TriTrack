@@ -1,6 +1,9 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/core/providers/participant_provider.dart';
+import 'package:frontend/core/services/participant_service.dart';
+import 'package:frontend/data/repositories/participant_repository.dart';
 import './core/providers/race_provider.dart';
 import './core/services/race_service.dart';
 import './core/theme/colors.dart';
@@ -12,6 +15,7 @@ import './features/home_page/pages/home.dart';
 import 'package:provider/provider.dart';
 import './core/theme/app_theme.dart';
 import './data/firebase_options.dart';
+import 'features/input_bib/pages/input_bib.dart';
 
 main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -21,6 +25,12 @@ main() async {
         Provider(create: (_) => RaceService(RaceRepository())),
         ChangeNotifierProvider(
           create: (context) => RaceProvider(context.read<RaceService>()),
+        ),
+        Provider(create: (_) => ParticipantService(ParticipantRepository())),
+        ChangeNotifierProvider(
+          create:
+              (context) =>
+                  ParticipantProvider(context.read<ParticipantService>()),
         ),
       ],
       child: const MyApp(),
@@ -54,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const Center(child: Text('Participants Page')),
-    const Center(child: Text('Input BIB Page')),
+    const InputBib(),
     const Center(child: Text('Leaderboard Page')),
     const Center(child: Text('Notification Page')),
   ];
