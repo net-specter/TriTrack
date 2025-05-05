@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class TriColors {
   static Color primary = const Color(0xFF4E61F6);
   static Color secondary = const Color(0xFFEE443F);
+  static Color success = const Color(0xFF43B75D);
+  static Color warning = const Color(0xFFFFAA00);
 
   // ignore: deprecated_member_use
   static Color primaryLight = const Color(0xFF4E61F6).withOpacity(0.5);

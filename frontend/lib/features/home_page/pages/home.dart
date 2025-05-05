@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/text_styles.dart';
+import 'package:frontend/features/home_page/widgets/start_stop_race.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -7,9 +7,10 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        'Home Page',
-        style: TriTextStyles.body.copyWith(fontWeight: FontWeight.w500),
+      child: Column(
+        children: [
+          const RaceTimerWidget(), // Add the race timer widget
+        ],
       ),
     );
   }
