@@ -20,37 +20,30 @@ class AddParticipantHome extends StatelessWidget {
               isDismissible: false,
               enableDrag: true,
               builder: (BuildContext context) {
-                return DraggableScrollableSheet(
-                  initialChildSize: 0.5,
-                  minChildSize: 0.3,
-                  maxChildSize: 0.9,
-                  builder: (
-                    BuildContext context,
-                    ScrollController scrollController,
-                  ) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: TriColors.white, // Modal background color
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16.0),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: const [
-                          ModalHeader(title: 'Add New Participant'),
-                          Expanded(child: AddParticipantForm()),
-                        ],
-                      ),
-                    );
-                  },
+                return Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.9,
+                  ),
+                  decoration: BoxDecoration(
+                    color: TriColors.white, // Modal background color
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16.0),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min, // Adjust height dynamically
+                    children: const [
+                      ModalHeader(title: 'Add New Participant'),
+                      AddParticipantForm(),
+                    ],
+                  ),
                 );
               },
             );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: TriColors.primary,
-
             padding: const EdgeInsets.symmetric(
               horizontal: Textpacings.l,
               vertical: Textpacings.m,
@@ -80,8 +73,6 @@ class AddParticipantModal extends StatelessWidget {
       },
       child: Center(
         child: Container(
-          width: 550,
-          height: 450,
           decoration: BoxDecoration(
             color: TriColors.white,
             borderRadius: BorderRadius.circular(12.0),

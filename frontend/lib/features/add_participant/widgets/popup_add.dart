@@ -42,89 +42,90 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(Textpacings.l),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            FormFieldLabel(label: 'BIB Number'),
-            CustomTextFormField(
-              hintText: 'BIB #',
-              onChanged: (value) => setState(() => _bibNumber = value),
-              validator:
-                  (value) =>
-                      value == null || value.isEmpty
-                          ? 'Please enter BIB number'
-                          : null,
-            ),
-
-            FormFieldLabel(label: 'Full Name'),
-            CustomTextFormField(
-              hintText: 'Participant Name',
-              onChanged: (value) => setState(() => _fullName = value),
-              validator:
-                  (value) =>
-                      value == null || value.isEmpty
-                          ? 'Please enter full name'
-                          : null,
-            ),
-            FormFieldLabel(label: 'Category'),
-            DropdownButtonFormField<String>(
-              value: _category,
-              items:
-                  _categories.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: TriTextStyles.bodySmall.copyWith(
-                          color:
-                              Colors
-                                  .black, // Set dropdown item text color to black
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(Textpacings.l),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              FormFieldLabel(label: 'BIB Number'),
+              CustomTextFormField(
+                hintText: 'BIB #',
+                onChanged: (value) => setState(() => _bibNumber = value),
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Please enter BIB number'
+                            : null,
+              ),
+              FormFieldLabel(label: 'Full Name'),
+              CustomTextFormField(
+                hintText: 'Participant Name',
+                onChanged: (value) => setState(() => _fullName = value),
+                validator:
+                    (value) =>
+                        value == null || value.isEmpty
+                            ? 'Please enter full name'
+                            : null,
+              ),
+              FormFieldLabel(label: 'Category'),
+              DropdownButtonFormField<String>(
+                value: _category,
+                items:
+                    _categories.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TriTextStyles.bodySmall.copyWith(
+                            color:
+                                Colors
+                                    .black, // Set dropdown item text color to black
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-              onChanged: (value) => setState(() => _category = value!),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: TriColors.greyLight),
+                      );
+                    }).toList(),
+                onChanged: (value) => setState(() => _category = value!),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: TriColors.greyLight),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: Textpacings.m,
+                    vertical: Textpacings.s,
+                  ),
+                  filled: true,
+                  fillColor: TriColors.lightGray,
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: Textpacings.m,
-                  vertical: Textpacings.s,
+                style: TriTextStyles.bodySmall.copyWith(
+                  color:
+                      Colors.black, // Set selected dropdown text color to black
                 ),
-                filled: true,
-                fillColor: TriColors.lightGray,
+                dropdownColor:
+                    TriColors.lightGray, // Background color of the dropdown
               ),
-              style: TriTextStyles.bodySmall.copyWith(
-                color:
-                    Colors.black, // Set selected dropdown text color to black
-              ),
-              dropdownColor:
-                  TriColors.lightGray, // Background color of the dropdown
-            ),
-            const SizedBox(height: Textpacings.l),
-            ElevatedButton(
-              onPressed: _submitForm,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TriColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: Textpacings.m),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+              const SizedBox(height: Textpacings.l),
+              ElevatedButton(
+                onPressed: _submitForm,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TriColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: Textpacings.m),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
-              ),
-              child: Text(
-                'Add Participant',
-                style: TriTextStyles.body.copyWith(
-                  color: TriColors.white,
-                  fontWeight: FontWeight.bold,
+                child: Text(
+                  'Add Participant',
+                  style: TriTextStyles.body.copyWith(
+                    color: TriColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/colors.dart';
 import 'package:frontend/core/theme/text_styles.dart';
-import 'package:frontend/features/add_participant/pages/add_paticipant.dart';
+import 'package:frontend/features/add_participant/pages/add_paticipant_button.dart';
 import 'package:frontend/features/home_page/pages/home.dart';
 
 import 'core/theme/app_theme.dart';
