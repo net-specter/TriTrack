@@ -155,4 +155,53 @@ class ParticipantService {
   Future<String> inputParticipantSwimming(String bibNumber) async {
     return await _participantRepository.inputParticipantSwimming(bibNumber);
   }
+
+  Future<List<Participant>> getParticipantsFinish() {
+    return _participantRepository.getParticipantsFinish().then((dtoList) {
+      return dtoList.map(_mapDtoToModel).toList();
+    });
+  }
+
+  Future<List<Participant>> getParticipentSwimmingComplete() {
+    return _participantRepository.getParticipentSwimmingComplete().then((
+      dtoList,
+    ) {
+      return dtoList.map(_mapDtoToModel).toList();
+    });
+  }
+
+  Future<List<Participant>> getParticipentCyclingComplete() {
+    return _participantRepository.getParticipentCyclingComplete().then((
+      dtoList,
+    ) {
+      return dtoList.map(_mapDtoToModel).toList();
+    });
+  }
+
+  Future<List<Participant>> getParticipentRunningComplete() {
+    return _participantRepository.getParticipentRunningComplete().then((
+      dtoList,
+    ) {
+      return dtoList.map(_mapDtoToModel).toList();
+    });
+  }
+
+  Stream<List<Participant>> getParticipantsRank() {
+    return _participantRepository.getParticipantsRank().map((dtoList) {
+      return dtoList.map((dto) {
+        return Participant(
+          id: dto.id,
+          name: dto.name,
+          bibNumber: dto.bibNumber,
+          category: dto.category,
+          swimmingDuration: dto.swimmingDuration,
+          cyclingDuration: dto.cyclingDuration,
+          runningDuration: dto.runningDuration,
+          rank: dto.rank,
+          finalDuration: dto.finalDuration,
+          rankValue: dto.rankValue,
+        );
+      }).toList();
+    });
+  }
 }

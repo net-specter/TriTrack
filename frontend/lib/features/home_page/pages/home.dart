@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/home_page/widgets/participant_dashboard.dart';
+import 'package:frontend/features/home_page/widgets/participant_dashboard_progress.dart';
 import 'package:frontend/features/home_page/widgets/start_stop_race.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,10 +13,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return SingleChildScrollView(
       child: Column(
         children: [
-          const RaceTimerWidget(), // Add the race timer widget
+          RaceTimerWidget(),
+          const SizedBox(height: 20),
+          ParticipantDashboard(),
+          ParticipantDashboardProgress(),
         ],
       ),
     );

@@ -298,4 +298,129 @@ class ParticipantRepository {
   Future<String> inputParticipantCycling(String bibNumber) async {
     return await _inputParticipant(bibNumber, 'cycling');
   }
+
+  Future<List<ParticipantDto>> getParticipantsFinish() {
+    return _participantsCollection.orderBy('bib_number').get().then((snapshot) {
+      return snapshot.docs
+          .map((doc) {
+            return ParticipantDto.fromJson(
+              doc.id,
+              doc.data() as Map<String, dynamic>,
+            );
+          })
+          .where(
+            (p) =>
+                p.swimmingTime != null &&
+                p.cyclingTime != null &&
+                p.runningTime != null,
+          )
+          .toList();
+    });
+  }
+
+  Future<List<ParticipantDto>> _getParticipantCompentSegment(
+    String segment,
+  ) async {
+    try {
+      final snapshot =
+          await _participantsCollection
+              .where('${segment}_time', isNotEqualTo: null)
+              .orderBy('${segment}_time', descending: true)
+              .get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return ParticipantDto.fromJson(doc.id, data);
+      }).toList();
+    } catch (e) {
+      print('Error fetching participants for segment $segment: $e');
+      return [];
+    }
+  }
+
+  Future<List<ParticipantDto>> getParticipentSwimmingComplete() async {
+    return await _getParticipantCompentSegment('swimming');
+  }
+
+  Future<List<ParticipantDto>> getParticipentCyclingComplete() async {
+    return await _getParticipantCompentSegment('cycling');
+  }
+
+  Future<List<ParticipantDto>> getParticipentRunningComplete() async {
+    return await _getParticipantCompentSegment('running');
+  }
+
+  Stream<List<ParticipantDto>> getParticipantsRank() {
+    return _participantsCollection.snapshots().map((snapshot) {
+      final participants =
+          snapshot.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            final participant = ParticipantDto.fromJson(doc.id, data);
+
+            final isComplete =
+                participant.swimmingDuration != null &&
+                participant.cyclingDuration != null &&
+                participant.runningDuration != null;
+
+            if (!isComplete) {
+              participant.finalDuration = 'Incomplete';
+              participant.rankValue = double.infinity;
+            } else {
+              final swimMs = _parseDurationToMs(participant.swimmingDuration);
+              final cycleMs = _parseDurationToMs(participant.cyclingDuration);
+              final runMs = _parseDurationToMs(participant.runningDuration);
+
+              final totalMs = swimMs + cycleMs + runMs;
+              participant.finalDuration = _formatDuration(totalMs);
+              participant.rankValue = totalMs.toDouble();
+            }
+
+            return participant;
+          }).toList();
+
+      participants.sort((a, b) => a.rankValue.compareTo(b.rankValue));
+
+      int rankCounter = 1;
+      for (final p in participants) {
+        if (p.rankValue != double.infinity) {
+          p.rank = _rankSuffix(rankCounter++);
+        } else {
+          p.rank = '-';
+        }
+      }
+
+      return participants;
+    });
+  }
+
+  int _parseDurationToMs(String? duration) {
+    if (duration == null) return 0;
+    final parts = duration.split(':').map(int.tryParse).toList();
+    if (parts.length < 4 || parts.contains(null)) return 0;
+
+    final hours = parts[0]!;
+    final minutes = parts[1]!;
+    final seconds = parts[2]!;
+    final milliseconds = parts[3]!;
+    return (((hours * 60 + minutes) * 60) + seconds) * 1000 + milliseconds;
+  }
+
+  String _formatDuration(int totalMs) {
+    final duration = Duration(milliseconds: totalMs);
+    final h = duration.inHours.toString().padLeft(2, '0');
+    final m = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final s = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    final ms = (duration.inMilliseconds % 1000).toString().padLeft(3, '0');
+    return '$h:$m:$s:$ms';
+  }
+
+  String _rankSuffix(int rank) {
+    if (rank == 1) return '1st';
+    if (rank == 2) return '2nd';
+    if (rank == 3) return '3rd';
+    if (rank % 10 == 1 && rank % 100 != 11) return '${rank}st';
+    if (rank % 10 == 2 && rank % 100 != 12) return '${rank}nd';
+    if (rank % 10 == 3 && rank % 100 != 13) return '${rank}rd';
+    return '${rank}th';
+  }
 }

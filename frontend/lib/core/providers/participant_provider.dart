@@ -80,4 +80,24 @@ class ParticipantProvider with ChangeNotifier {
   Future<String> inputParticipantSwimming(String bibNumber) async {
     return await _participantService.inputParticipantSwimming(bibNumber);
   }
+
+  Future<List<Participant>> getParticipantsFinish() async {
+    return await _participantService.getParticipantsFinish();
+  }
+
+  Future<List<Participant>> getParticipentSwimmingComplete() async {
+    return await _participantService.getParticipentSwimmingComplete();
+  }
+
+  Future<List<Participant>> getParticipentCyclingComplete() async {
+    return await _participantService.getParticipentCyclingComplete();
+  }
+
+  Future<List<Participant>> getParticipentRunningComplete() async {
+    return await _participantService.getParticipentRunningComplete();
+  }
+
+  Stream<List<Participant>> getParticipantsRank() {
+    return _participantService.getParticipantsRank();
+  }
 }

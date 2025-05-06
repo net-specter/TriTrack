@@ -28,8 +28,16 @@ class _RaceTimerWidgetState extends State<RaceTimerWidget> {
     return Container(
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(157, 178, 206, 0.1),
+        color: Color.fromARGB(255, 237, 237, 237),
         borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x3F000000),
+            blurRadius: 4,
+            offset: Offset(0, 2),
+            spreadRadius: 0,
+          ),
+        ],
       ),
       child: SingleChildScrollView(
         child: Column(

@@ -11,6 +11,9 @@ class ParticipantDto {
   final String? cyclingDuration;
   final DateTime? runningTime;
   final String? runningDuration;
+  String? rank;
+  String? finalDuration;
+  double rankValue;
   final Timestamp createdAt;
 
   ParticipantDto({
@@ -24,6 +27,9 @@ class ParticipantDto {
     this.cyclingDuration,
     this.runningTime,
     this.runningDuration,
+    this.rank,
+    this.finalDuration,
+    this.rankValue = 0,
     required this.createdAt,
   });
 
@@ -48,6 +54,9 @@ class ParticipantDto {
               ? (json['running_time'] as Timestamp).toDate()
               : null,
       runningDuration: json['running_duration'],
+      rank: json['rank'],
+      finalDuration: json['final_duration'],
+      rankValue: json['rank_value'] ?? 0,
       createdAt: json['created_at'] ?? Timestamp.now(),
     );
   }
@@ -66,6 +75,9 @@ class ParticipantDto {
       "running_time":
           runningTime != null ? Timestamp.fromDate(runningTime!) : null,
       "running_duration": runningDuration,
+      "rank": rank,
+      "final_duration": finalDuration,
+      "rank_value": rankValue,
       "created_at": createdAt,
     };
   }

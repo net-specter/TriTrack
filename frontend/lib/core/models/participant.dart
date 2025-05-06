@@ -11,6 +11,9 @@ class Participant {
   final String? cyclingDuration;
   final DateTime? runningTime;
   final String? runningDuration;
+  final String? rank;
+  final String? finalDuration;
+  double rankValue = 0;
   final Timestamp createdAt;
 
   Participant({
@@ -24,6 +27,9 @@ class Participant {
     this.cyclingDuration,
     this.runningTime,
     this.runningDuration,
+    this.rank,
+    this.finalDuration,
+    this.rankValue = 0,
   }) : createdAt = Timestamp.now();
 }
 
