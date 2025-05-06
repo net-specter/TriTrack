@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/models/participant.dart';
@@ -9,25 +8,16 @@ import '../../../core/providers/participant_provider.dart';
 Future<void> createParticipant(
   BuildContext context,
   ParticipantProvider participantProvider,
+  Participant participant,
 ) async {
   try {
-    final docRef = FirebaseFirestore.instance.collection('participants').doc();
-    final autoId = docRef.id;
-
-    Participant participant = Participant(
-      id: autoId,
-      name: "Kao Vichet",
-      bibNumber: 15,
-      category: "Category A",
-    );
-
     final result = await participantProvider.checkDuplicateBibNumber(
       participant,
     );
 
     if (result == 'Duplicate') {
-      showDialog(
-        // ignore: use_build_context_synchronously
+      // Show duplicate entry dialog
+      await showDialog(
         context: context,
         builder:
             (context) => AlertDialog(
@@ -50,9 +40,7 @@ Future<void> createParticipant(
                   ),
                   onPressed: () async {
                     await participantProvider.replaceParticipant(participant);
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop(); // Close the dialog
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         duration: Duration(seconds: 1),
@@ -76,7 +64,7 @@ Future<void> createParticipant(
             ),
       );
     } else if (result == 'Success') {
-      // ignore: use_build_context_synchronously
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           duration: Duration(seconds: 1),
@@ -84,7 +72,7 @@ Future<void> createParticipant(
         ),
       );
     } else {
-      // ignore: use_build_context_synchronously
+      // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           duration: Duration(seconds: 1),
@@ -93,7 +81,7 @@ Future<void> createParticipant(
       );
     }
   } catch (e) {
-    // ignore: use_build_context_synchronously
+    // Handle unexpected errors
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 1),

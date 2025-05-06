@@ -14,13 +14,17 @@ class _RaceTimerWidgetState extends State<RaceTimerWidget> {
   final StartStopRaceController _controller = StartStopRaceController();
 
   @override
+  void initState() {
+    super.initState();
+    _controller.listenToRaceUpdates(() {
+      setState(() {});
+    });
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
-  }
-
-  void _onTimerTick() {
-    setState(() {});
   }
 
   @override
@@ -28,9 +32,9 @@ class _RaceTimerWidgetState extends State<RaceTimerWidget> {
     return Container(
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 237, 237, 237),
+        color: const Color.fromARGB(255, 237, 237, 237),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: Color(0x3F000000),
             blurRadius: 4,
@@ -54,8 +58,8 @@ class _RaceTimerWidgetState extends State<RaceTimerWidget> {
             const SizedBox(height: 20),
             RaceControlButtons(
               status: _controller.status,
-              onStart: () => _controller.startTimer(_onTimerTick),
-              onEnd: _controller.endTimer,
+              onStart: () => _controller.startTimer(),
+              onEnd: () => _controller.endTimer(),
             ),
             const SizedBox(height: 15),
           ],
@@ -104,7 +108,6 @@ class RaceTimeDisplay extends StatelessWidget {
     return Container(
       width: 392,
       height: 59,
-
       decoration: BoxDecoration(
         color: const Color(0xFF2E3440),
         borderRadius: BorderRadius.circular(15),
@@ -119,11 +122,10 @@ class RaceTimeDisplay extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-
           Text(
             'Race Time',
             style: TriTextStyles.captionSmall.copyWith(
-              color: const Color(0xFFFFFFFF),
+              color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -151,11 +153,14 @@ class RaceControlButtons extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ElevatedButton.icon(
-          onPressed: status != RaceStatus.active ? onStart : null,
+          onPressed: status == RaceStatus.notStarted ? onStart : null,
           icon: const Icon(Icons.play_arrow),
           label: const Text('Start Race'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: TriColors.success,
+            backgroundColor:
+                status == RaceStatus.notStarted
+                    ? TriColors.success
+                    : TriColors.greyLight,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             shape: RoundedRectangleBorder(
@@ -170,7 +175,10 @@ class RaceControlButtons extends StatelessWidget {
           icon: const Icon(Icons.pause),
           label: const Text('End Race'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: TriColors.secondary,
+            backgroundColor:
+                status == RaceStatus.active
+                    ? TriColors.secondary
+                    : TriColors.greyLight,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             shape: RoundedRectangleBorder(

@@ -21,10 +21,16 @@ class RaceRepository {
   }
 
   Future<void> startTime(String raceID) async {
-    await _racesCollection.doc(raceID).update({'start_time': Timestamp.now()});
+    await _racesCollection.doc(raceID).update({
+      'start_time': Timestamp.now(),
+      'status': 'in_progress',
+    });
   }
 
   Future<void> endTime(String raceID) async {
-    await _racesCollection.doc(raceID).update({"end_time": Timestamp.now()});
+    await _racesCollection.doc(raceID).update({
+      'end_time': Timestamp.now(),
+      'status': 'finished',
+    });
   }
 }

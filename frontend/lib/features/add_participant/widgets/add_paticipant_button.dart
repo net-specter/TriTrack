@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/space.dart';
 import '../../../core/theme/text_styles.dart';
 import '../../../core/theme/colors.dart';
-import '../widgets/popup_add.dart';
+import 'popup_add.dart';
 
 class AddParticipantHome extends StatelessWidget {
   const AddParticipantHome({super.key});

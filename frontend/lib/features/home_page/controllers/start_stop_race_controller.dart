@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum RaceStatus { notStarted, active, finished }
 
@@ -6,38 +7,92 @@ class StartStopRaceController {
   Timer? _timer;
   int _milliseconds = 0;
   RaceStatus _status = RaceStatus.notStarted;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String _raceId = 'pxs4oGoSCo46kvMk0lNN'; // Use the provided race ID
+  late StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>
+  _raceSubscription;
 
   int get milliseconds => _milliseconds;
   RaceStatus get status => _status;
 
-  void startTimer(void Function() onTick) {
+  void listenToRaceUpdates(void Function() onUpdate) {
+    // Listen to real-time updates for the race document
+    _raceSubscription = _firestore
+        .collection('race')
+        .doc(_raceId)
+        .snapshots()
+        .listen((snapshot) {
+          if (snapshot.exists) {
+            final data = snapshot.data()!;
+            final status = data['status'] as String?;
+            final startTime = (data['start_time'] as Timestamp?)?.toDate();
+            final endTime = (data['end_time'] as Timestamp?)?.toDate();
+
+            if (status == 'in_progress' && startTime != null) {
+              _status = RaceStatus.active;
+              _milliseconds =
+                  DateTime.now().difference(startTime).inMilliseconds;
+              _startTimerInternal(onUpdate);
+            } else if (status == 'finished' &&
+                startTime != null &&
+                endTime != null) {
+              _status = RaceStatus.finished;
+              _milliseconds = endTime.difference(startTime).inMilliseconds;
+              _stopTimer();
+            } else {
+              _status = RaceStatus.notStarted;
+              _milliseconds = 0;
+              _stopTimer();
+            }
+
+            onUpdate(); // Notify the UI to update
+          }
+        });
+  }
+
+  Future<void> startTimer() async {
     if (_status == RaceStatus.notStarted) {
       _milliseconds = 0;
+
+      // Update the race document in Firestore to start the race
+      await _firestore.collection('race').doc(_raceId).update({
+        'status': 'in_progress',
+        'start_time': Timestamp.now(),
+      });
     }
+  }
 
-    _status = RaceStatus.active;
+  Future<void> endTimer() async {
+    _stopTimer();
+    _status = RaceStatus.finished;
 
-    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      _milliseconds += 10;
-      onTick(); // Notify the UI to update
+    // Update the race document in Firestore to end the race
+    await _firestore.collection('race').doc(_raceId).update({
+      'status': 'finished',
+      'end_time': Timestamp.now(),
+      'duration': _milliseconds,
     });
   }
 
-  void endTimer() {
+  void _startTimerInternal(void Function() onUpdate) {
+    _timer?.cancel(); // Cancel any existing timer
+    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
+      _milliseconds += 10;
+      onUpdate(); // Notify the UI to update
+    });
+  }
+
+  void _stopTimer() {
     _timer?.cancel();
-    _status = RaceStatus.finished;
   }
 
   String formatTime(int milliseconds) {
-    int hours = milliseconds ~/ 3600000;
-    int minutes = (milliseconds % 3600000) ~/ 60000;
-    int seconds = (milliseconds % 60000) ~/ 1000;
-    int millis = (milliseconds % 1000) ~/ 10;
-
-    return '${hours.toString().padLeft(2, '0')}:'
-        '${minutes.toString().padLeft(2, '0')}:'
-        '${seconds.toString().padLeft(2, '0')}:'
-        '${millis.toString().padLeft(2, '0')}';
+    final duration = Duration(milliseconds: milliseconds);
+    final hours = duration.inHours.toString().padLeft(2, '0');
+    final minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
+    final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    final millis = (duration.inMilliseconds % 1000).toString().padLeft(3, '0');
+    return '$hours:$minutes:$seconds.$millis';
   }
 
   String getStatusText() {
@@ -53,5 +108,6 @@ class StartStopRaceController {
 
   void dispose() {
     _timer?.cancel();
+    _raceSubscription.cancel();
   }
 }

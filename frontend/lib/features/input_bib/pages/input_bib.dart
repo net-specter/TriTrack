@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/theme/text_styles.dart';
+import 'package:frontend/features/input_bib/widgets/timecount.dart';
 import '../../../core/widgets/tabs/tab_component.dart';
 import '../widgets/select_view.dart';
 
@@ -20,7 +19,7 @@ class _InputBibState extends State<InputBib> {
         child: Column(
           children: [
             const SizedBox(height: 10),
-            Text("00:00:00:00", style: TriTextStyles.headline),
+            Timecount(),
             const SizedBox(height: 10),
             TabComponent(
               tabs: {

@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/core/models/participant.dart';
+import 'package:frontend/features/add_participant/controllers/crud_participant.dart';
+import 'package:provider/provider.dart';
+import '../../../core/providers/participant_provider.dart';
 import '../../../core/theme/colors.dart';
 import '../../../core/theme/text_styles.dart';
 import '../../../core/theme/space.dart';
@@ -12,8 +17,7 @@ class AddParticipantForm extends StatefulWidget {
 
 class _AddParticipantFormState extends State<AddParticipantForm> {
   final _formKey = GlobalKey<FormState>();
-  // ignore: unused_field
-  String _bibNumber = '';
+  double _bibNumber = 0;
   String _fullName = '';
   String _category = 'Male 10-29';
 
@@ -26,17 +30,28 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
     'Female 50+',
   ];
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Participant $_fullName added successfully!',
-            style: TriTextStyles.bodySmall,
-          ),
-        ),
+      final participantProvider = Provider.of<ParticipantProvider>(
+        context,
+        listen: false,
       );
-      Navigator.pop(context);
+
+      final docRef =
+          FirebaseFirestore.instance.collection('participants').doc();
+      final autoId = docRef.id;
+      final participant = Participant(
+        id: autoId,
+        name: _fullName,
+        bibNumber: _bibNumber,
+        category: _category,
+      );
+
+      await createParticipant(context, participantProvider, participant);
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -53,7 +68,10 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
               FormFieldLabel(label: 'BIB Number'),
               CustomTextFormField(
                 hintText: 'BIB #',
-                onChanged: (value) => setState(() => _bibNumber = value),
+                onChanged:
+                    (value) => setState(
+                      () => _bibNumber = double.tryParse(value) ?? 0,
+                    ),
                 validator:
                     (value) =>
                         value == null || value.isEmpty
@@ -80,9 +98,7 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
                         child: Text(
                           value,
                           style: TriTextStyles.bodySmall.copyWith(
-                            color:
-                                Colors
-                                    .black, // Set dropdown item text color to black
+                            color: Colors.black,
                           ),
                         ),
                       );
@@ -99,12 +115,8 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
                   filled: true,
                   fillColor: TriColors.lightGray,
                 ),
-                style: TriTextStyles.bodySmall.copyWith(
-                  color:
-                      Colors.black, // Set selected dropdown text color to black
-                ),
-                dropdownColor:
-                    TriColors.lightGray, // Background color of the dropdown
+                style: TriTextStyles.bodySmall.copyWith(color: Colors.black),
+                dropdownColor: TriColors.lightGray,
               ),
               const SizedBox(height: Textpacings.l),
               ElevatedButton(
