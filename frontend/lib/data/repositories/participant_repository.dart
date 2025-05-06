@@ -318,36 +318,55 @@ class ParticipantRepository {
     });
   }
 
-  Future<List<ParticipantDto>> _getParticipantCompentSegment(
+  Future<List<ParticipantDto>> _getParticipantCompleteSegment(
     String segment,
   ) async {
     try {
+      final fieldName = '${segment}_time';
       final snapshot =
           await _participantsCollection
-              .where('${segment}_time', isNotEqualTo: null)
-              .orderBy('${segment}_time', descending: true)
+              .where(
+                fieldName,
+                isNotEqualTo: null,
+              ) // Ensure the field is not null
+              .orderBy(
+                fieldName,
+                descending: true,
+              ) // Order by the field in descending order
               .get();
 
-      return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        return ParticipantDto.fromJson(doc.id, data);
-      }).toList();
-    } catch (e) {
-      print('Error fetching participants for segment $segment: $e');
+      return snapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+
+            // Additional null check for safety
+            if (data[fieldName] == null) {
+              return null; // Skip participants with null segment times
+            }
+
+            return ParticipantDto.fromJson(doc.id, data);
+          })
+          .where((participant) => participant != null)
+          .cast<ParticipantDto>()
+          .toList();
+    } catch (e, stackTrace) {
+      print(
+        'Error fetching participants for segment "$segment": $e\n$stackTrace',
+      );
       return [];
     }
   }
 
   Future<List<ParticipantDto>> getParticipentSwimmingComplete() async {
-    return await _getParticipantCompentSegment('swimming');
+    return await _getParticipantCompleteSegment('swimming');
   }
 
   Future<List<ParticipantDto>> getParticipentCyclingComplete() async {
-    return await _getParticipantCompentSegment('cycling');
+    return await _getParticipantCompleteSegment('cycling');
   }
 
   Future<List<ParticipantDto>> getParticipentRunningComplete() async {
-    return await _getParticipantCompentSegment('running');
+    return await _getParticipantCompleteSegment('running');
   }
 
   Stream<List<ParticipantDto>> getParticipantsRank() {
