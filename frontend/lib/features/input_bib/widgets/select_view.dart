@@ -73,18 +73,30 @@ class _SelectViewState extends State<SelectView> {
                             currentPage = page;
                           });
                         },
-                        onClickSetTime: (id) {
+                        onClickSetTime: (id) async {
+                          String result = '';
                           switch (widget.segmentType) {
                             case 'swimming':
-                              participantProvider.cardClickSwimming(id);
+                              result = await participantProvider
+                                  .cardClickSwimming(id);
                               break;
                             case 'running':
-                              participantProvider.cardClickRunning(id);
+                              result = await participantProvider
+                                  .cardClickRunning(id);
                               break;
                             case 'cycling':
-                              participantProvider.cardClickCycling(id);
+                              result = await participantProvider
+                                  .cardClickCycling(id);
                               break;
                           }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(result),
+                              backgroundColor: Colors.black87,
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
                         },
                         onClickRemoveTime: (id) {
                           switch (widget.segmentType) {

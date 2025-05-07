@@ -116,20 +116,37 @@ class ParticipantService {
     return await _participantRepository.addParticipant(participantDTO);
   }
 
+  Future<String> updateParticipant(
+    String participantID,
+    Participant participant,
+  ) async {
+    final participantDTO = ParticipantDto(
+      id: participant.id,
+      name: participant.name,
+      bibNumber: participant.bibNumber,
+      category: participant.category,
+      createdAt: participant.createdAt,
+    );
+    return await _participantRepository.updateParticipant(
+      participantID,
+      participantDTO,
+    );
+  }
+
   Future<String> deleteParticipant(Participant participant) async {
     return await _participantRepository.deleteParticipant(participant.id);
   }
 
-  Future<void> cardClickRunning(String participantID) async {
-    await _participantRepository.cardClickRunning(participantID);
+  Future<String> cardClickRunning(String participantID) async {
+    return await _participantRepository.cardClickRunning(participantID);
   }
 
-  Future<void> cardClickCycling(String participantID) async {
-    await _participantRepository.cardClickCycling(participantID);
+  Future<String> cardClickCycling(String participantID) async {
+    return await _participantRepository.cardClickCycling(participantID);
   }
 
-  Future<void> cardClickSwimming(String participantID) async {
-    await _participantRepository.cardClickSwimming(participantID);
+  Future<String> cardClickSwimming(String participantID) async {
+    return await _participantRepository.cardClickSwimming(participantID);
   }
 
   Future<void> cardClickRemoveSwimming(String participantID) async {

@@ -115,3 +115,43 @@ Future<void> deleteParticipant(
     );
   }
 }
+
+Future<void> editParticipant(
+  BuildContext context,
+  String participantID,
+  Participant updatedParticipant,
+  ParticipantProvider participantProvider,
+) async {
+  try {
+    final result = await participantProvider.updateParticipant(
+      participantID,
+      updatedParticipant,
+    );
+
+    if (result == 'Success') {
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text('Participant updated successfully!'),
+        ),
+      );
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text('An error occurred while updating the participant.'),
+        ),
+      );
+    }
+  } catch (e) {
+    // Handle unexpected errors
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 1),
+        content: Text('Error: $e'),
+      ),
+    );
+  }
+}

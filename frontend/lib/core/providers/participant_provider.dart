@@ -45,15 +45,22 @@ class ParticipantProvider with ChangeNotifier {
     return _participantService.deleteParticipant(participant);
   }
 
-  Future<void> cardClickRunning(String participantId) async {
+  Future<String> updateParticipant(
+    String participantID,
+    Participant participant,
+  ) {
+    return _participantService.updateParticipant(participantID, participant);
+  }
+
+  Future<String> cardClickRunning(String participantId) async {
     return await _participantService.cardClickRunning(participantId);
   }
 
-  Future<void> cardClickSwimming(String participantId) async {
+  Future<String> cardClickSwimming(String participantId) async {
     return await _participantService.cardClickSwimming(participantId);
   }
 
-  Future<void> cardClickCycling(String participantId) async {
+  Future<String> cardClickCycling(String participantId) async {
     return await _participantService.cardClickCycling(participantId);
   }
 

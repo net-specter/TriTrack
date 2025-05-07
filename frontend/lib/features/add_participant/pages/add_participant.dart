@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/models/participant.dart';
 import 'package:frontend/core/theme/colors.dart';
 import 'package:frontend/core/theme/text_styles.dart';
 import 'package:frontend/core/widgets/buttons/primary_button.dart';
@@ -29,7 +30,9 @@ class AddParticipant extends StatelessWidget {
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
                   builder: (BuildContext context) {
-                    return const AddParticipantModal();
+                    return const AddParticipantModal(
+                      titlePopup: "Add Participant",
+                    );
                   },
                 );
               },
@@ -45,7 +48,13 @@ class AddParticipant extends StatelessWidget {
 }
 
 class AddParticipantModal extends StatelessWidget {
-  const AddParticipantModal({super.key});
+  final String titlePopup;
+  final Participant? participant;
+  const AddParticipantModal({
+    super.key,
+    required this.titlePopup,
+    this.participant,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -71,9 +80,15 @@ class AddParticipantModal extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            ModalHeader(title: 'Add New Participant'),
-            Expanded(child: AddParticipantForm()),
+          children: [
+            ModalHeader(title: titlePopup),
+            Expanded(
+              child: AddParticipantForm(
+                participant: participant,
+                title: "Add Participants",
+                isEdit: false,
+              ),
+            ),
           ],
         ),
       ),

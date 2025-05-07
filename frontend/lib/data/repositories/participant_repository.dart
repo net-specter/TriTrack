@@ -166,6 +166,35 @@ class ParticipantRepository {
     }
   }
 
+  Future<String> updateParticipant(
+    String participantID,
+    ParticipantDto participantDTO,
+  ) async {
+    try {
+      final querySnapshot =
+          await _participantsCollection
+              .where('bib_number', isEqualTo: participantDTO.bibNumber)
+              .get();
+      final isDuplicate = querySnapshot.docs.any(
+        (doc) => doc.id != participantID,
+      );
+
+      if (isDuplicate) {
+        return 'Participant id already exists.';
+      }
+      await _participantsCollection.doc(participantID).update({
+        'bib_number': participantDTO.bibNumber,
+        'name': participantDTO.name,
+        'category': participantDTO.category,
+        'updated_at': DateTime.now(),
+      });
+
+      return 'Participant updated successfully.';
+    } catch (e) {
+      return 'Participant update failed: $e';
+    }
+  }
+
   Future<String> deleteParticipant(String paticipantID) async {
     try {
       await Future.wait([
@@ -178,7 +207,7 @@ class ParticipantRepository {
     }
   }
 
-  Future<void> _updateSegmentTime(
+  Future<String> _updateSegmentTime(
     String participantID,
     String segmentFieldPrefix,
   ) async {
@@ -201,23 +230,29 @@ class ParticipantRepository {
     final formattedTime =
         "${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}:${milliseconds.toString().padLeft(3, '0')}";
 
-    await _participantsCollection.doc(participantID).update({
-      '${segmentFieldPrefix}_time': now,
-      '${segmentFieldPrefix}_duration': formattedTime,
-      'updated_at': now,
-    });
+    final raceStatus = raceDoc.get('status') as String;
+    if (raceStatus == "in_progress") {
+      await _participantsCollection.doc(participantID).update({
+        '${segmentFieldPrefix}_time': now,
+        '${segmentFieldPrefix}_duration': formattedTime,
+        'updated_at': now,
+      });
+      return 'Participant updated successfully.';
+    } else {
+      return 'Race is not in progress.';
+    }
   }
 
-  Future<void> cardClickSwimming(String participantID) async {
-    await _updateSegmentTime(participantID, 'swimming');
+  Future<String> cardClickSwimming(String participantID) async {
+    return await _updateSegmentTime(participantID, 'swimming');
   }
 
-  Future<void> cardClickRunning(String participantID) async {
-    await _updateSegmentTime(participantID, 'running');
+  Future<String> cardClickRunning(String participantID) async {
+    return await _updateSegmentTime(participantID, 'running');
   }
 
-  Future<void> cardClickCycling(String participantID) async {
-    await _updateSegmentTime(participantID, 'cycling');
+  Future<String> cardClickCycling(String participantID) async {
+    return await _updateSegmentTime(participantID, 'cycling');
   }
 
   Future<void> _cardClickRemove(
@@ -272,16 +307,19 @@ class ParticipantRepository {
       final minutes = duration.inMinutes % 60;
       final seconds = duration.inSeconds % 60;
       final milliseconds = duration.inMilliseconds % 1000;
-
+      final raceStatus = raceDoc.get('status') as String;
       final formattedTime =
           "${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}:${milliseconds.toString().padLeft(3, '0')}";
-      await _participantsCollection.doc(participantID).update({
-        '${segmentFieldPrefix}_time': now,
-        '${segmentFieldPrefix}_duration': formattedTime,
-        'updated_at': now,
-      });
-
-      return 'Success';
+      if (raceStatus == "in_progress") {
+        await _participantsCollection.doc(participantID).update({
+          '${segmentFieldPrefix}_time': now,
+          '${segmentFieldPrefix}_duration': formattedTime,
+          'updated_at': now,
+        });
+        return 'Participant updated successfully.';
+      } else {
+        return 'Race is not in progress.';
+      }
     } catch (e) {
       return 'Error';
     }
@@ -325,23 +363,15 @@ class ParticipantRepository {
       final fieldName = '${segment}_time';
       final snapshot =
           await _participantsCollection
-              .where(
-                fieldName,
-                isNotEqualTo: null,
-              ) // Ensure the field is not null
-              .orderBy(
-                fieldName,
-                descending: true,
-              ) // Order by the field in descending order
+              .where(fieldName, isNotEqualTo: null)
+              .orderBy(fieldName, descending: true)
               .get();
 
       return snapshot.docs
           .map((doc) {
             final data = doc.data() as Map<String, dynamic>;
-
-            // Additional null check for safety
             if (data[fieldName] == null) {
-              return null; // Skip participants with null segment times
+              return null;
             }
 
             return ParticipantDto.fromJson(doc.id, data);
@@ -350,6 +380,7 @@ class ParticipantRepository {
           .cast<ParticipantDto>()
           .toList();
     } catch (e, stackTrace) {
+      // ignore: avoid_print
       print(
         'Error fetching participants for segment "$segment": $e\n$stackTrace',
       );

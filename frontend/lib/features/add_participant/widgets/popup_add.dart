@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/models/participant.dart';
+import 'package:frontend/core/widgets/buttons/primary_button.dart';
 import 'package:frontend/features/add_participant/controllers/crud_participant.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/participant_provider.dart';
@@ -9,7 +10,18 @@ import '../../../core/theme/text_styles.dart';
 import '../../../core/theme/space.dart';
 
 class AddParticipantForm extends StatefulWidget {
-  const AddParticipantForm({super.key});
+  final String title;
+  final bool isEdit;
+  final String? id;
+  final Participant? participant;
+
+  const AddParticipantForm({
+    super.key,
+    this.id,
+    required this.title,
+    required this.isEdit,
+    this.participant,
+  });
 
   @override
   State<AddParticipantForm> createState() => _AddParticipantFormState();
@@ -17,8 +29,8 @@ class AddParticipantForm extends StatefulWidget {
 
 class _AddParticipantFormState extends State<AddParticipantForm> {
   final _formKey = GlobalKey<FormState>();
-  double _bibNumber = 0;
-  String _fullName = '';
+  final TextEditingController _bibNumberController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
   String _category = 'Male 10-29';
 
   final List<String> _categories = [
@@ -30,6 +42,24 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
     'Female 50+',
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.participant != null) {
+      // Populate fields with existing participant data
+      _bibNumberController.text = widget.participant!.bibNumber.toString();
+      _fullNameController.text = widget.participant!.name;
+      _category = widget.participant!.category;
+    }
+  }
+
+  @override
+  void dispose() {
+    _bibNumberController.dispose();
+    _fullNameController.dispose();
+    super.dispose();
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final participantProvider = Provider.of<ParticipantProvider>(
@@ -37,17 +67,33 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
         listen: false,
       );
 
-      final docRef =
-          FirebaseFirestore.instance.collection('participants').doc();
-      final autoId = docRef.id;
-      final participant = Participant(
-        id: autoId,
-        name: _fullName,
-        bibNumber: _bibNumber,
-        category: _category,
-      );
+      final bibNumber = double.tryParse(_bibNumberController.text) ?? 0;
+      final fullName = _fullNameController.text;
 
-      await createParticipant(context, participantProvider, participant);
+      if (!widget.isEdit) {
+        // Add new participant
+        final docRef =
+            FirebaseFirestore.instance.collection('participants').doc();
+        final autoId = docRef.id;
+        final participant = Participant(
+          id: autoId,
+          name: fullName,
+          bibNumber: bibNumber,
+          category: _category,
+        );
+
+        await createParticipant(context, participantProvider, participant);
+      } else {
+        // Edit existing participant
+        final participant = Participant(
+          id: widget.id!,
+          name: fullName,
+          bibNumber: bibNumber,
+          category: _category,
+        );
+
+        await participantProvider.updateParticipant(widget.id!, participant);
+      }
 
       if (mounted) {
         Navigator.pop(context);
@@ -66,12 +112,22 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               FormFieldLabel(label: 'BIB Number'),
-              CustomTextFormField(
-                hintText: 'BIB #',
-                onChanged:
-                    (value) => setState(
-                      () => _bibNumber = double.tryParse(value) ?? 0,
-                    ),
+              TextFormField(
+                controller: _bibNumberController, // Use controller
+                decoration: InputDecoration(
+                  hintText: 'BIB #',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: TriColors.greyLight),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: Textpacings.m,
+                    vertical: Textpacings.m,
+                  ),
+                  filled: true,
+                  fillColor: TriColors.lightGray,
+                ),
+                style: TriTextStyles.body,
+                keyboardType: TextInputType.number,
                 validator:
                     (value) =>
                         value == null || value.isEmpty
@@ -79,9 +135,21 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
                             : null,
               ),
               FormFieldLabel(label: 'Full Name'),
-              CustomTextFormField(
-                hintText: 'Participant Name',
-                onChanged: (value) => setState(() => _fullName = value),
+              TextFormField(
+                controller: _fullNameController, // Use controller
+                decoration: InputDecoration(
+                  hintText: 'Participant Name',
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: TriColors.greyLight),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: Textpacings.m,
+                    vertical: Textpacings.m,
+                  ),
+                  filled: true,
+                  fillColor: TriColors.lightGray,
+                ),
+                style: TriTextStyles.body,
                 validator:
                     (value) =>
                         value == null || value.isEmpty
@@ -90,7 +158,10 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
               ),
               FormFieldLabel(label: 'Category'),
               DropdownButtonFormField<String>(
-                value: _category,
+                value:
+                    _categories.contains(_category)
+                        ? _category
+                        : null, // Ensure value is valid
                 items:
                     _categories.map((String value) {
                       return DropdownMenuItem<String>(
@@ -98,12 +169,17 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
                         child: Text(
                           value,
                           style: TriTextStyles.bodySmall.copyWith(
+                            fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
                       );
                     }).toList(),
-                onChanged: (value) => setState(() => _category = value!),
+                onChanged: (value) {
+                  if (value != null) {
+                    setState(() => _category = value);
+                  }
+                },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: TriColors.greyLight),
@@ -117,25 +193,15 @@ class _AddParticipantFormState extends State<AddParticipantForm> {
                 ),
                 style: TriTextStyles.bodySmall.copyWith(color: Colors.black),
                 dropdownColor: TriColors.lightGray,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please select a category';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: Textpacings.l),
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TriColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: Textpacings.m),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Add Participant',
-                  style: TriTextStyles.body.copyWith(
-                    color: TriColors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+              PrimaryButton(label: widget.title, onPressed: _submitForm),
             ],
           ),
         ),
@@ -152,10 +218,13 @@ class FormFieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: Textpacings.s),
+      padding: const EdgeInsets.only(top: Textpacings.m, bottom: Textpacings.s),
       child: Text(
         label,
-        style: TriTextStyles.body.copyWith(fontWeight: FontWeight.bold),
+        style: TriTextStyles.body.copyWith(
+          color: TriColors.greyDark,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
