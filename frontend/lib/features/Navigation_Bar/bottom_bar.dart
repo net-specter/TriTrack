@@ -34,11 +34,11 @@ class _BottomBarState extends State<BottomBar> {
       activeIcon: Icons.leaderboard,
       label: 'Leaderboard',
     ),
-    BottomBarItem(
-      inactiveIcon: Icons.notifications_outlined,
-      activeIcon: Icons.notifications,
-      label: 'Notification',
-    ),
+    // BottomBarItem(
+    //   inactiveIcon: Icons.notifications_outlined,
+    //   activeIcon: Icons.notifications,
+    //   label: 'Notification',
+    // ),
   ];
 
   @override

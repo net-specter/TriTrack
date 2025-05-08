@@ -10,5 +10,5 @@ final List<Widget> pages = [
   const AddParticipant(),
   const InputBib(),
   const Leaderboard(),
-  const Center(child: Text('Notification Page')),
+  // const Center(child: Text('Notification Page')),
 ];
