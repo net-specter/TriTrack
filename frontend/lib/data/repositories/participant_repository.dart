@@ -216,8 +216,7 @@ class ParticipantRepository {
       throw Exception("Race document not found.");
     }
     if (!(raceDoc.data() as Map<String, dynamic>).containsKey('status') ||
-        !(raceDoc.data() as Map<String, dynamic>).containsKey('start_time') ||
-        !(raceDoc.data() as Map<String, dynamic>).containsKey('end_time')) {
+        !(raceDoc.data() as Map<String, dynamic>).containsKey('start_time')) {
       return "Race is not in progress.";
     }
 
