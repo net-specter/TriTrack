@@ -226,7 +226,9 @@ class ParticipantRepository {
     final minutes = duration.inMinutes % 60;
     final seconds = duration.inSeconds % 60;
     final milliseconds = duration.inMilliseconds % 1000;
-
+    if (!(raceDoc.data() as Map<String, dynamic>).containsKey('status')) {
+      return "Race is not in progress.";
+    }
     final formattedTime =
         "${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}:${milliseconds.toString().padLeft(3, '0')}";
 
